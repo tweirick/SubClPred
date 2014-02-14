@@ -29,7 +29,18 @@ for line in open(rename_file,'r'):
 
 
 for line in open(file_name,'r'):  
-    if not line[0] in "(),\n":
-        print(line)
-        #!= "(" and line[0] != ")" and line[0] != "," and line[0] != "\n":
-            
+
+    if not line[0] in "(),\n;":
+
+        if "|" in line:
+            line_id = line.split("|")[1] 
+        else: 
+            line_id = line.strip()
+
+        if  line_id in rename_dict:
+            print( rename_dict[ line_id ]  )  
+        else: 
+            print("ERROR,id",line_id,"not found. Exiting.")
+            exit()
+    else: 
+       print(line.strip())        
