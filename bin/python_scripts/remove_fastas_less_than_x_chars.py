@@ -2,16 +2,24 @@ import argparse
 from glob import glob
 parser = argparse.ArgumentParser()    
 parser.add_argument('--file_set',
+                    required=True,
                     help='Takes a file name as a string.')
+
+parser.add_argument('--out_dir',
+                    default="",
+                    help='Takes a file name as a string.')
+
 parser.add_argument('--min_chars',
+                    required=True,
                     help='all seqs under this number will be excluded. ')
 
 args = parser.parse_args()
 
 infile_name = args.file_set
-
-min_chars = int(args.min_chars)
+out_dir     = args.out_dir 
+min_chars   = int(args.min_chars)
     
+
 for file_name in glob(infile_name):
     file = open(file_name,"r")
     out_list = []
@@ -44,10 +52,14 @@ for file_name in glob(infile_name):
             
     file.close()     
     
-    outfile = open(file_name+".greaterthan"+str(min_chars)+"chars.faa","w")
+    if out_dir != "": 
+        file_name = file_name.split("/")[-1]
+
+    outfile = open(out_dir+file_name+".greaterthan"+str(min_chars)+"chars.faa","w")
     outfile.write("\n".join(out_list))
     outfile.close()
     
-    print(smaller_than_cnt,"removed",larger_than_cnt,"kept.")
-    
-
+    outfile = open(out_dir+file_name+".greaterthan"+str(min_chars)+"chars.log","w")
+    outfile.write( str(smaller_than_cnt)+" removed "+str(larger_than_cnt)+" kept.\n" )
+    outfile.close()
+ 
