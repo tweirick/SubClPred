@@ -35,7 +35,7 @@ file_set      = glob(args.file_set)
 out_dir       = args.out_dir
 graph_out_dir = args.graph_out_dir
 
-if graph_out_dir != ""
+if graph_out_dir != "":
     assert graph_out_dir[-1] == "/"
 
 title_text    = args.title_text.replace("_"," ")
