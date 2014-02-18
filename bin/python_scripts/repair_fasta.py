@@ -9,19 +9,26 @@ def getargs(ver='%prog 0.0'):
     parser = argparse.ArgumentParser(description='Take a blastclust cluster '+
              'file as input and remove all clusters from fasta file set.')    
     parser.add_argument('--file_set', 
-                        help='')
-    
-    parser.add_argument('--file_suffix', 
-                        default=".pruneBJXZU.fasta",
+                        required=True,
+                        help='A file or regex.')
+
+    parser.add_argument('--out_dir',
+                    default="",
+                    help='Takes a file name as a string.')
+
+    parser.add_argument('--file_suffix',
+                        required=False, 
+                        default=".pruneBJXZUO.fasta",
                         help='')
     
     parser.add_argument('--remove_over_x_percent', 
+                        required=False,
                         default=0.0,
                         help='')
 
     args = parser.parse_args()
     
-    return glob(args.file_set),args.file_suffix,args.remove_over_x_percent
+    return glob(args.file_set),args.file_suffix,args.remove_over_x_percent,args.out_dir
 
 
 def build_fasta_dict(input_file_name):
@@ -81,23 +88,28 @@ def buildnewfasta(fasta_name_seq_list,max_percent_illegal_chars):
 #PRE_PSI-BLAST_52412/*catted_52412.faa
 #file_set = glob("/home/TWeirick/FEATURE_GENERATING_PROGRAMS/40per_Sets/40per_all_catted.faa")#
 
-file_set,file_suffix,remove_over_x_percent = getargs(ver='%prog 0.0')
-print("File_Name","Fastas_In_Input","Fastas_In_Kept_Output","Files_In_Discarded_Output")
+file_set,file_suffix,remove_over_x_percent,out_dir = getargs(ver='%prog 0.0')
 for file_name in file_set:
     
     fasta_list = build_fasta_dict(file_name)
    
     out_list,discard_list = buildnewfasta(fasta_list,remove_over_x_percent)
 
-    print(file_name,
-          str(len(fasta_list)),
-          str(len(out_list)),
-          str(len(discard_list)))
+    if out_dir != "":
+        file_name = file_name.split("/")[-1]
 
-    out_file = open(file_name+file_suffix,'w')
+    out_file = open(out_dir+file_name+file_suffix,'w')
     out_file.write('\n'.join(out_list))
     out_file.close()
     
-    out_file = open(file_name+file_suffix+".discard",'w')
+    out_file = open(out_dir+file_name+file_suffix+".discard",'w')
     out_file.write('\n'.join(discard_list))
     out_file.close()
+
+    out_file = open(out_dir+file_name+file_suffix+".log",'w')
+    out_file.write( 
+          file_name+" #seqs_in_original: "+str(len(fasta_list))
+          +" #seqs_kept: "+str(len(out_list))+" #seqs_removed: "+str(len(discard_list))+"\n"  )
+    out_file.close()
+
+
