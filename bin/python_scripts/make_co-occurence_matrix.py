@@ -82,6 +82,8 @@ for ac_id in sorted(name_2d_dict):
                  assert cell_cnt <= max_cnt
                  if cell_cnt == max_cnt: numb_always_together+=1
             print(name_2d_dict[ac_id][ac_id_1],end="\t")
+            #if 
+            #else: 
         else: 
             numb_never_together+=1
             print(0,end="\t")
