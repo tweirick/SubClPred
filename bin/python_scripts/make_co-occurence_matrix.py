@@ -92,5 +92,6 @@ for ac_id in sorted(name_2d_dict):
 print("total_els",len(name_2d_dict)*len(name_2d_dict))
 print("numb_always_together",numb_always_together)
 print("numb_never_together",numb_never_together)
-print("Precent no overlap",(numb_always_together+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1)  ))
+print(len(name_2d_dict))
+print("Precent no overlap",(numb_always_together+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1)  )
 
