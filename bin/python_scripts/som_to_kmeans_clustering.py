@@ -36,16 +36,16 @@ def getargs():
     parser.add_argument('--som_y',
                        required=True,
                        help='''Number of neurons in the y direction ex: 5 .''')
-
+    """
     parser.add_argument('--make_pca',
                        default=False,
                        help='''
                        If true will generate a graph of a PCA on the k-means 
                        results.''')
-
+    """
     args = parser.parse_args()
 
-    make_pca = str(args.make_pca)
+    make_pca = False #str(args.make_pca)
     in_file  = args.input_file
     x        = int(args.som_x)
     y        = int(args.som_y)
