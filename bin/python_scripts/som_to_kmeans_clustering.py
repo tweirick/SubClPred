@@ -36,16 +36,16 @@ def getargs():
     parser.add_argument('--som_y',
                        required=True,
                        help='''Number of neurons in the y direction ex: 5 .''')
-    """
-    parser.add_argument('--make_pca',
-                       default=False,
+    
+    parser.add_argument('--out_dir',
+                       default="",
                        help='''
                        If true will generate a graph of a PCA on the k-means 
                        results.''')
-    """
+    
     args = parser.parse_args()
 
-    make_pca = False #str(args.make_pca)
+    out_dir = args.out_dir
     in_file  = args.input_file
     x        = int(args.som_x)
     y        = int(args.som_y)
@@ -57,7 +57,7 @@ def getargs():
     else:        
         print("error must be bool")
         exit()
-    return in_file,x,y,make_pca
+    return in_file,x,y,out_dir
 
 
 def getvectors(file_name):
@@ -160,9 +160,18 @@ def getclusternumber(orange_map,vec_len):
            break 
 
 
-def dokmeans(np_vecs,in_file,k_clusters,domain_set):
+def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir):
 
-    tstr = str(time()) 
+    #This is to keep runs over-writing each others names. 
+    #The time will prevent this if running jobs linerarly, 
+    #However, running them in parrallel while the change is very
+    #small could overlap. Thus the random number at the end. 
+     
+    tstr = str(time())+"."+str(random.random()) 
+
+    if out_dir != "":
+        in_file = in_file.split("/")[-1]
+
     k       = len(k_clusters)
     vec_len = len(k_clusters[0][0])
     init_vecs = np.ndarray( shape=(k,vec_len)  )
@@ -172,8 +181,7 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set):
             init_vecs[cl_i][cl_j] = cluster_centroid[cl_j]        
     km              = KMeans(n_clusters=k,max_iter=10000,init=init_vecs)
     kmf             = km.fit(np_vecs)
-
-
+      
     dict_cnt        = {}
     membership_dict = {}
     #Convert into other data configs 
@@ -187,9 +195,9 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set):
         else:
             dict_cnt[ln]       =[np_vecs[i] ]
             membership_dict[ln]=[line_ids[i]]
-    
+     
     #Write tsv file. 
-    tsv_file = open(in_file+"."+tstr+".clstr.tsv",'w')
+    tsv_file = open(out_dir+in_file+"."+tstr+".clstr.tsv",'w')
     tsv_file.write( "\n".join(tsv_cluster_assignments) )
     tsv_file.close()    
     
@@ -197,12 +205,8 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set):
     for e in dict_cnt:
         fu.append(dict_cnt[e])
     fu = np.array(fu)
-     
     db_index = daviesbouldin(  fu  ) 
-     
-     
     in_file = in_file.split("/")[-1]
-
     intercluster_lengths = [] 
     
     #Make arrays of the centers of the clusters, 
@@ -210,7 +214,6 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set):
     intra_cluster_dist  = []
     inter_cluster_dist  = []
     cluster_centroids   = []
-
             
     for cluster_el in sorted(dict_cnt):    
         cluster_centroid = np.mean( np.array( dict_cnt[cluster_el]),axis=0 )
@@ -234,7 +237,7 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set):
                 str(intra_cluster_var)+"\n" )
 
     #Write stats
-    stat_file = open(in_file+"."+tstr+".stat.txt",'w')
+    stat_file = open(out_dir+in_file+"."+tstr+".stat.txt",'w')
     stat_file.write( stat_str )
     stat_file.close()
 
@@ -249,11 +252,11 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set):
         cluster_lengths.append( "cluster-"+str(w)+"\t"+str(len( seq_list  ) ) )
         cluster_and_ids_on_one_line.append("cluster-"+str(w)+"\t "+" ".join(seq_list))
     
-    of = open(in_file+"."+tstr+".cluster-lens.txt",'w')
+    of = open(out_dir+in_file+"."+tstr+".cluster-lens.txt",'w')
     of.write("\n".join(cluster_lengths))
     of.close()
-    
-    of = open(in_file+"."+tstr+".cluster-members.txt",'w')
+        
+    of = open(out_dir+in_file+"."+tstr+".cluster-members.txt",'w')
     of.write("\n".join(cluster_and_ids_on_one_line))
     of.close()
 
@@ -333,7 +336,7 @@ def runOrangeSOM(domain_set,np_vecs,som_size_x,som_size_y):
 #                              Main Program                 
 #=============================================================================
 #Get command line arguments 
-in_file,x,y,show_clustering_performance = getargs()
+in_file,x,y,out_dir = getargs()
 #Get vectors from standard input.
 rl,line_ids,domain_set = textvecstolist(in_file)
 
@@ -347,5 +350,5 @@ som_map =  runOrangeSOM(domain_set,np_vecs,x,y)
 #Find k and centroids
 k_clusters = getclusternumber( som_map,len(np_vecs) )
 #Do kmeans clustering
-dokmeans(np_vecs,in_file,k_clusters,domain_set)
+dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir)
 
