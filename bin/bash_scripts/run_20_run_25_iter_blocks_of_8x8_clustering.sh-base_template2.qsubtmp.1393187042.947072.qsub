@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -q batch
+#PBS -l nodes=1:ppn=2
+#PBS -l walltime=100:00:00
+#PBS -N base_tmp
+#PBS -j oe
+cd $PBS_O_WORKDIR
+
+date
+bash bin/bash_scripts/run_25_iter_blocks_of_clustering8x8.sh
+
+date
+

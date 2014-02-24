@@ -50,13 +50,6 @@ def getargs():
     x        = int(args.som_x)
     y        = int(args.som_y)
 
-    if make_pca.lower() == "f" or make_pca.lower() == "false":
-        make_pca = False        
-    elif make_pca.lower() == "t" or make_pca.lower() == "true":
-        make_pca = True
-    else:        
-        print("error must be bool")
-        exit()
     return in_file,x,y,out_dir
 
 
@@ -167,7 +160,7 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir):
     #However, running them in parrallel while the change is very
     #small could overlap. Thus the random number at the end. 
      
-    tstr = str(time())+"."+str(random.random()) 
+    tstr = str(time())+"."+str(random()) 
 
     if out_dir != "":
         in_file = in_file.split("/")[-1]
