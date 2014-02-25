@@ -67,6 +67,8 @@ numb_always_together = 0
 numb_never_together  = 0
 numb_above_median    = 0 
 numb_below_median    = 0
+top_75_percent       = 0
+top_90_precent       = 0
 
 for ac_id in sorted(name_2d_dict):
     print(ac_id,end="\t")
@@ -81,6 +83,11 @@ for ac_id in sorted(name_2d_dict):
             else: 
                  assert cell_cnt <= max_cnt
                  if cell_cnt == max_cnt: numb_always_together+=1
+                 
+                 if cell_cnt > float(max_cnt)*0.9:  top_90_precent+=1                  
+                 if cell_cnt > float(max_cnt)*0.75: top_75_percent+=1
+
+
             print(name_2d_dict[ac_id][ac_id_1],end="\t")
             #if 
             #else: 
@@ -92,6 +99,8 @@ for ac_id in sorted(name_2d_dict):
 print("total_els",len(name_2d_dict)*len(name_2d_dict))
 print("numb_always_together",numb_always_together)
 print("numb_never_together",numb_never_together)
+print("top_90_precent",top_90_precent)
+print("top_75_percent",top_75_percent)
 print(len(name_2d_dict))
 print("Precent no overlap",(numb_always_together+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1)  )
 
