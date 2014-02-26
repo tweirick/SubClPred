@@ -14,54 +14,61 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--file_set',
                     required=True,
                     help='''A file or regex must be in format show in doc string.''' ) 
+parser.add_argument('--output_matrix',
+                    required=True,
+                    help='''Name and path to output matrix to.''' )
 
-args      = parser.parse_args()
-file_glob = glob(args.file_set)
+args          = parser.parse_args()
+file_glob     = glob(args.file_set)
+output_matrix = args.output_matrix
+name_2d_dict  = {}
+#max_cnt       = len(file_glob)
 
-name_2d_dict = {}
 
-max_cnt = len(file_glob)
-
+max_cnt=0
 for file_name in file_glob: 
+   
     
-    for line in open(file_name,'r'):
-        cluster_members = line.strip().split("\t")[-1].split()    
-        
-        while len(cluster_members) > 0:
-           match_against = cluster_members.pop(0)
+    for line in open(file_name.replace(".cluster-members.txt",".stat.txt"),'r'):
+        cluster_number = int( line.split()[2] )
 
-           if match_against in name_2d_dict:
-               name_2d_dict[match_against][match_against]+=1
-           else: 
-               name_2d_dict.update({match_against:{match_against:1}})
-                
+    if cluster_number == 12:
+        max_cnt+=1
+        for line in open(file_name,'r'):
+            cluster_members = line.strip().split("\t")[-1].split()    
+          
+            while len(cluster_members) > 0:
+               match_against = cluster_members.pop(0)
 
-           for ac_el in cluster_members:
-                 
-               #if not ac_el in name_2d_dict:
-               #    name_2d_dict.update({ac_el:{match_against:1}})
-                   
-               if ac_el in name_2d_dict[match_against]:
-                   name_2d_dict[match_against][ac_el]+=1
+               if match_against in name_2d_dict:
+                   name_2d_dict[match_against][match_against]+=1
                else: 
-                   name_2d_dict[match_against].update({ac_el:1})
-               
-               if not ac_el in name_2d_dict:
-                   #name_2d_dict[ac_el][ac_el]+=1
-                   #else:
-                   name_2d_dict.update({ac_el: {ac_el:0} }) 
+                   name_2d_dict.update({match_against:{match_against:1}})
+               for ac_el in cluster_members:
+                   #if not ac_el in name_2d_dict:
+                   #    name_2d_dict.update({ac_el:{match_against:1}})
+                   if ac_el in name_2d_dict[match_against]:
+                       name_2d_dict[match_against][ac_el]+=1
+                   else: 
+                       name_2d_dict[match_against].update({ac_el:1})
+                   if not ac_el in name_2d_dict:
+                       #name_2d_dict[ac_el][ac_el]+=1
+                       #else:
+                       name_2d_dict.update({ac_el: {ac_el:0} }) 
 
-               if match_against in name_2d_dict[ac_el]:
-                  name_2d_dict[ac_el][match_against]+=1
-               else: 
-                  name_2d_dict[ac_el].update({match_against:1})
+                   if match_against in name_2d_dict[ac_el]:
+                      name_2d_dict[ac_el][match_against]+=1
+                   else: 
+                      name_2d_dict[ac_el].update({match_against:1})
                
 
 #Make a matrix from the dict
-print("x",end="\t")
+matrix_out_list = []
+#print("x",end="\t")
+title_line_list = ["x"]
 for ac_id in sorted(name_2d_dict):
-    print(ac_id,end="\t")
-print() 
+    title_line_list.append(ac_id)
+matrix_out_list.append( "\t".join(title_line_list) )
 
 numb_always_together = 0
 numb_never_together  = 0
@@ -69,38 +76,45 @@ numb_above_median    = 0
 numb_below_median    = 0
 top_75_percent       = 0
 top_90_precent       = 0
+top_65_percent       = 0
+top_50_percent       = 0
+
 
 for ac_id in sorted(name_2d_dict):
-    print(ac_id,end="\t")
+    out_line = [ac_id]
     for ac_id_1 in sorted(name_2d_dict):
         if ac_id_1 in name_2d_dict[ac_id]:
-
             cell_cnt = name_2d_dict[ac_id][ac_id_1]
-
             if ac_id == ac_id_1: 
-                 assert cell_cnt == max_cnt
+                 #print(cell_cnt,max_cnt)
+                 #assert cell_cnt == max_cnt
                  numb_always_together+=1
             else: 
                  assert cell_cnt <= max_cnt
                  if cell_cnt == max_cnt: numb_always_together+=1
-                 
                  if cell_cnt > float(max_cnt)*0.9:  top_90_precent+=1                  
                  if cell_cnt > float(max_cnt)*0.75: top_75_percent+=1
-
-
-            print(name_2d_dict[ac_id][ac_id_1],end="\t")
-            #if 
-            #else: 
+                 if cell_cnt > float(max_cnt)*0.65: top_65_percent+=1
+                 if cell_cnt > float(max_cnt)*0.50: top_50_percent+=1
+                 #print(cell_cnt,max_cnt,float(max_cnt)*0.50)
+            out_line.append( str( cell_cnt  ) )
         else: 
+            cell_cnt = 0
             numb_never_together+=1
-            print(0,end="\t")
-    print()
+            out_line.append( str( cell_cnt  ) )
+    matrix_out_list.append( "\t".join(out_line) )
+
+matrix_out_file = open(output_matrix,'w')
+matrix_out_file.write( "\n".join(matrix_out_list) )
+matrix_out_file.close()
 
 print("total_els",len(name_2d_dict)*len(name_2d_dict))
 print("numb_always_together",numb_always_together)
 print("numb_never_together",numb_never_together)
 print("top_90_precent",top_90_precent)
 print("top_75_percent",top_75_percent)
+print("top_65_percent",top_65_percent)
+print("top_50_percent",top_50_percent)
 print(len(name_2d_dict))
 print("Precent no overlap",(numb_always_together+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1)  )
 

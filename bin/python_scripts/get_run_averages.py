@@ -40,6 +40,7 @@ for vec_type in sorted(stat_dict):
    data_set = np.array( stat_dict[vec_type] )
    
    avg_inter_intra_cluster_diff = np.average(data_set[:,-1],axis=0)
-   avg_cluster_numb             = np.average(data_set[:,0],axis=0) 
-   print(vec_type+"\t"+str(avg_inter_intra_cluster_diff)+"\t"+str(avg_cluster_numb))
+   avg_cluster_numb             = np.average(data_set[:,0],axis=0)
+   avg_dbindex                  = np.average(data_set[:,1],axis=0) 
+   print(vec_type+"\t"+str(avg_inter_intra_cluster_diff)+"\t"+str(avg_cluster_numb)+"\t"+str(avg_dbindex))
 
