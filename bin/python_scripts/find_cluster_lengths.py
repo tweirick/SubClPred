@@ -3,8 +3,8 @@
 
 from glob import glob
 
-#file_glob = glob("data/*som_to_kmeans/*PLPredPhysChem22_nolog*.stat.txt")
-file_glob = glob("data/*som_to_kmeans/*.stat.txt")
+file_glob = glob("data/*som_to_kmeans/*PLPredPhysChem22_nolog*.stat.txt")
+#file_glob = glob("data/*som_to_kmeans/*.stat.txt")
 
 out_dict = {}
 for file_name in file_glob:
@@ -38,9 +38,9 @@ for neuron_type_el in sorted(out_dict):
         title_str.append(vec_type)
         cnt_str = ""
         for el_counts in sorted(out_dict[neuron_type_el][vec_type], key=out_dict[neuron_type_el][vec_type].get,reverse=True):
-            cnt_str = el_counts
-            #cnt_str = cnt_str+el_counts+":"+str(out_dict[neuron_type_el][vec_type][el_counts])+"/"           
-            break 
+            #cnt_str = el_counts
+            cnt_str = cnt_str+el_counts+":"+str(out_dict[neuron_type_el][vec_type][el_counts])+"/"           
+            #break 
         row_list.append(cnt_str)
     matrix_list.append("\t".join(row_list))  
 

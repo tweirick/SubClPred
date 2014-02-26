@@ -79,6 +79,7 @@ top_90_precent       = 0
 top_65_percent       = 0
 top_50_percent       = 0
 
+matrixes = {   }
 
 for ac_id in sorted(name_2d_dict):
     out_line = [ac_id]
