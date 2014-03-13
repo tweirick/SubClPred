@@ -176,7 +176,13 @@ z = anova_filter.fit(c.data,c.true_preds)
 #Calculate stats for the run.  
 score_array = z.scores_
 
+>>>>>>>>>>>>>>>>>>>> File 1
 #for i in range(len(z.scores_)):
+>>>>>>>>>>>>>>>>>>>> File 2
+#for i in range(len(z.scores_)):
+>>>>>>>>>>>>>>>>>>>> File 3
+#for i in sorted(list(z.scores_)):
+<<<<<<<<<<<<<<<<<<<<
 #    print(z.scores_[i],c.el_titles[i])
 
 
@@ -218,11 +224,14 @@ for i in z.get_support(indices=True):
         score_above_90th_dict.update({c.el_titles[i]:z.scores_[i]})
 
 sorted_scores_array = sorted(scores_array, key=lambda x: x[1],reverse=True)
+#print( sorted_scores_array )
 
-
-for e in sorted_scores_array:
-    print(e)
-
+stat_out_list = []
+for el in sorted_scores_array:
+    stat_out_list.append( el[0]+"\t"+str(el[1])   )
+out_file = open(out_file_name + ".feature-vals.txt",'w')
+out_file.write("\n".join(stat_out_list))
+out_file.close()
 
 #Output the
 out_list = []
@@ -257,6 +266,39 @@ for e in sorted(score_above_90th_dict, key=score_above_90th_dict.get):
 out_file = open(out_file_name+".reducedto90th.txt",'w')
 out_file.write(" ".join(out_list))
 out_file.close()
+
+
+#sorted_scores_array
+#out_file = open(out_file_name+".top500.txt",'w')
+#out_file.write(" ".join( [str(i[0]) for i in sorted_scores_array[:500]]  ))
+#out_file.close()
+
+#sorted_scores_array
+#out_file = open(out_file_name+".top400.txt",'w')
+#out_file.write(" ".join( [str(i[0]) for i in sorted_scores_array[:400]]  ))
+#out_file.close()
+
+#sorted_scores_array
+#out_file = open(out_file_name+".top300.txt",'w')
+#out_file.write(" ".join( [str(i[0]) for i in sorted_scores_array[:300]]  ))
+#out_file.close()
+
+
+#sorted_scores_array
+out_file = open(out_file_name+".top200.txt",'w')
+out_file.write(" ".join( [str(i[0]) for i in sorted_scores_array[:200]]  )) 
+out_file.close()
+
+#sorted_scores_array
+out_file = open(out_file_name+".top100.txt",'w')
+out_file.write(" ".join( [ str(i[0]) for i in sorted_scores_array[:100]]  )) 
+out_file.close()
+
+#sorted_scores_array
+out_file = open(out_file_name+".top50.txt",'w')
+out_file.write(" ".join( [ str(i[0]) for i in sorted_scores_array[:50]]  )) 
+out_file.close()
+
 
 #sorted_scores_array
 out_file = open(out_file_name+".4.txt",'w')

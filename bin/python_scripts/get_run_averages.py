@@ -1,11 +1,10 @@
 '''
 This program will calculate averages of the SOM which occur in this format.
-lac_pt.faa.pruneBJXZUO.fasta.AACOMP.EL_DESC_VAL.vec     number_of_clusters      11       DBINDEX        0.910282890954   inter_cluster  0.000107045941178        intra_cluster  0.000285169629542
- 
+lac_pt.faa.pruneBJXZUO.fasta.AACOMP.EL_DESC_VAL.vec     number_of_clusters      11       DBINDEX        0.910282890954   inter_cluster  0.000107045941178        intra_cluster  0.000285169629542 
 '''
 
 import argparse
-from glob import glob
+from   glob import glob
 import numpy as np
 
 #Get arguments from command line, output will be printed.  

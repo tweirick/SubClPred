@@ -89,6 +89,12 @@ for ac_id in sorted(name_2d_dict):
         if ac_id_1 in name_2d_dict[ac_id]:
             cell_cnt = name_2d_dict[ac_id][ac_id_1]
             if ac_id == ac_id_1: 
+>>>>>>>>>>>>>>>>>>>> File 1
+>>>>>>>>>>>>>>>>>>>> File 2
+                 #print(cell_cnt,max_cnt)
+>>>>>>>>>>>>>>>>>>>> File 3
+                 #print(cell_cnt,max_cnt)
+<<<<<<<<<<<<<<<<<<<<
                  #assert cell_cnt == max_cnt
                  numb_always_together+=1
             else: 
@@ -98,6 +104,14 @@ for ac_id in sorted(name_2d_dict):
                  if cell_cnt > float(max_cnt)*0.75: top_75_percent+=1
                  if cell_cnt > float(max_cnt)*0.65: top_65_percent+=1
                  if cell_cnt > float(max_cnt)*0.50: top_50_percent+=1
+>>>>>>>>>>>>>>>>>>>> File 1
+>>>>>>>>>>>>>>>>>>>> File 2
+                 #print(cell_cnt,max_cnt,float(max_cnt)*0.50)
+            out_line.append( str( cell_cnt  ) )
+>>>>>>>>>>>>>>>>>>>> File 3
+                 #print(cell_cnt,max_cnt,float(max_cnt)*0.50)
+            out_line.append( str( cell_cnt  ) )
+<<<<<<<<<<<<<<<<<<<<
         else: 
             cell_cnt = 0
             numb_never_together+=1
@@ -114,7 +128,11 @@ matrix_out_file = open(output_matrix,'w')
 matrix_out_file.write( "\n".join(matrix_out_list) )
 matrix_out_file.close()
 
+>>>>>>>>>>>>>>>>>>>> File 1
 
+>>>>>>>>>>>>>>>>>>>> File 2
+>>>>>>>>>>>>>>>>>>>> File 3
+<<<<<<<<<<<<<<<<<<<<
 print("total_els",len(name_2d_dict)*len(name_2d_dict))
 print("numb_always_together",numb_always_together)
 print("numb_never_together",numb_never_together)
@@ -124,6 +142,8 @@ print("top_65_percent",top_65_percent)
 print("top_50_percent",top_50_percent)
 print(len(name_2d_dict))
 print("Precent no overlap",(numb_always_together+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1)  )
+print("Precent no overlap",(top_65_percent+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1))
+print("Precent no overlap",(top_50_percent+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1))
 
 
 
