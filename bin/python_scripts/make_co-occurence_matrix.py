@@ -118,4 +118,7 @@ print("top_65_percent",top_65_percent)
 print("top_50_percent",top_50_percent)
 print(len(name_2d_dict))
 print("Precent no overlap",(numb_always_together+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1)  )
+print("Precent no overlap",(top_65_percent+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1))
+print("Precent no overlap",(top_50_percent+numb_never_together)/float( len(name_2d_dict)*len(name_2d_dict)-1))
+
 

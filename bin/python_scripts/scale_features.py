@@ -176,7 +176,7 @@ z = anova_filter.fit(c.data,c.true_preds)
 #Calculate stats for the run.  
 score_array = z.scores_
 
-#for i in range(len(z.scores_)):
+#for i in sorted(list(z.scores_)):
 #    print(z.scores_[i],c.el_titles[i])
 
 
@@ -217,7 +217,15 @@ for i in z.get_support(indices=True):
     if z.scores_[i] > f_score_90th:
         score_above_90th_dict.update({c.el_titles[i]:z.scores_[i]})
 
-sorted_scores_array = sorted(scores_array, key=lambda x: x[1])
+sorted_scores_array = sorted(scores_array, key=lambda x: x[1],reverse=True)
+#print( sorted_scores_array )
+
+stat_out_list = []
+for el in sorted_scores_array:
+    stat_out_list.append( el[0]+"\t"+str(el[1])   )
+out_file = open(out_file_name + ".feature-vals.txt",'w')
+out_file.write("\n".join(stat_out_list))
+out_file.close()
 
 #Output the
 out_list = []
