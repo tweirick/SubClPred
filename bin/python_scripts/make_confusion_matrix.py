@@ -210,40 +210,9 @@ for file_name in pred_file_glob:
     class_list.append( [class_name,preded_dict,true_class_dict,seq_in_class_dict] )
 
 
-# Compute ROC curve and ROC area for each class
-fpr     = dict()
-tpr     = dict()
-roc_auc = dict()
-for i in range(0,len(pred_file_glob)):
-    fpr[i], tpr[i], _ = roc_curve(true_pred_arr[:, i], score_array[:, i])
-    roc_auc[i] = auc(fpr[i], tpr[i])
-
-# Compute micro-average ROC curve and ROC area
-fpr["micro"], tpr["micro"], _ = roc_curve(true_pred_arr.ravel(), score_array.ravel())
-roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
-
-# Plot ROC curve
-pl.clf()
-pl.plot(fpr["micro"], tpr["micro"],
-        label='micro-average ROC curve (area = {0:0.2f})'
-              ''.format(roc_auc["micro"]))
-
-for i in range( 0,len(pred_file_glob)  ):
-    #print( fpr[i],tpr[i],  roc_auc[i] )
-    pl.plot(fpr[i], tpr[i], label='class {0} (area = {1:0.2f})'
-                                  ''.format(i, roc_auc[i]))
-pl.plot([0, 1], [0, 1], 'k--')
-pl.xlim([0.0, 1.0])
-pl.ylim([0.0, 1.05])
-pl.xlabel('False Positive Rate')
-pl.ylabel('True Positive Rate')
-pl.title('Receiver Operating Characteristics '+title_text)
-pl.legend(loc="lower right")
-pl.savefig('foo_roc.png', bbox_inches='tight')
 
 tps,fps,fns,tns=0,0,0,0
 confusion_dict = {}
-
 true_class = None
 for seq in sorted(seq_dict): 
     sorted_col = sorted(seq_dict[seq], key=seq_dict[seq].get,reverse=True)
@@ -275,7 +244,7 @@ for seq in sorted(seq_dict):
     confusion_dict[true_class][max_class]+=1
                       
 
-out_matrix = []
+out_matrix = ["x\t"+"\t".join(natural_sort(sorted(confusion_dict, key=confusion_dict.get,reverse=True)))]
 matrix     = []
 
 for true_el in natural_sort(sorted(confusion_dict, key=confusion_dict.get,reverse=True)):
@@ -292,22 +261,61 @@ for true_el in natural_sort(sorted(confusion_dict, key=confusion_dict.get,revers
             matrix_txt_col.append( "0" )
 
    matrix.append(matrix_col)
-   out_matrix.append("\t".join(matrix_txt_col))
+   out_matrix.append(true_el+"\t"+"\t".join(matrix_txt_col))
 
 
-print(matrix)
+#print(matrix)
 print("\n".join(out_matrix))
 print(len(confusion_dict)) 
 print(confusion_dict)    
 #print(fns,fps,tns,tps)
-#FN=0,FP=0,TN=0,TP=0
 pref = PerformanceCalculation(FN=fns,FP=fps,TN=tns,TP=tps)
 print( pref.getperformance() )
 
 # Show confusion matrix in a separate window
 pl.matshow(matrix)
-pl.title('Confusion matrix')
+pl.title('Confusion matrix for '+title_text)
 pl.colorbar()
 pl.ylabel('True label')
 pl.xlabel('Predicted label')
 pl.savefig('foo.png', bbox_inches='tight')
+
+
+
+# Compute ROC curve and ROC area for each class
+fpr     = dict()
+tpr     = dict()
+roc_auc = dict()
+for i in range(0,len(pred_file_glob)):
+    fpr[i], tpr[i], _ = roc_curve(true_pred_arr[:, i], score_array[:, i])
+    roc_auc[i] = auc(fpr[i], tpr[i])
+
+# Compute micro-average ROC curve and ROC area
+fpr["micro"], tpr["micro"], _ = roc_curve(true_pred_arr.ravel(), score_array.ravel())
+
+roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+# Plot ROC curve
+pl.clf()
+pl.plot(fpr["micro"], tpr["micro"],
+        label='micro-average ROC curve (area = {0:0.2f})'
+              ''.format(roc_auc["micro"]))
+
+for i in range( 0,len(pred_file_glob)  ):
+    #print( fpr[i],tpr[i],  roc_auc[i] )
+    pl.plot(fpr[i], tpr[i], label='class {0} (area = {1:0.2f})'
+                                  ''.format(i, roc_auc[i]))
+pl.plot([0, 1], [0, 1], 'k--')
+pl.xlim([0.0, 1.0])
+pl.ylim([0.0, 1.05])
+pl.xlabel('False Positive Rate')
+pl.ylabel('True Positive Rate')
+pl.title('Receiver Operating Characteristics for '+title_text)
+pl.legend(loc="lower right")
+pl.show()
+#pl.savefig('foo_roc.png', bbox_inches='tight')
+
+
+
+
+
