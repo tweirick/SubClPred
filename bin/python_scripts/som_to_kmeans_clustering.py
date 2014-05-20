@@ -153,14 +153,14 @@ def getclusternumber(orange_map,vec_len):
            break 
 
 
-def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir):
+def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir,x,y):
 
     #This is to keep runs over-writing each others names. 
     #The time will prevent this if running jobs linerarly, 
     #However, running them in parrallel while the change is very
     #small could overlap. Thus the random number at the end. 
      
-    tstr = str(time())+"."+str(random()) 
+    tstr = str(time())+"."+str(random())+".x"+str(x)+"-y"+str(y)
 
     if out_dir != "":
         in_file = in_file.split("/")[-1]
@@ -172,6 +172,7 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir):
         cluster_centroid = np.mean( k_clusters[cl_i]  ,axis=0 ) 
         for cl_j in range(len(cluster_centroid)):
             init_vecs[cl_i][cl_j] = cluster_centroid[cl_j]        
+    
     km              = KMeans(n_clusters=k,max_iter=10000,init=init_vecs)
     kmf             = km.fit(np_vecs)
       
@@ -223,17 +224,17 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir):
     inter_cluster_dist = np.sqrt( np.sum( sqrd_el_diff,axis=0  ) )
     intra_cluster_var  = np.var( np.array(intra_cluster_dist) )
     inter_cluster_var  = np.var( np.array(inter_cluster_dist) )
-
+    
     stat_str = (in_file+"\tnumber_of_clusters\t"+str(len(membership_dict))+
                 "\t DBINDEX \t"+str(db_index)+"\t inter_cluster \t"+
                 str(inter_cluster_var)+"\t intra_cluster \t"+
                 str(intra_cluster_var)+"\n" )
-
+    
     #Write stats
     stat_file = open(out_dir+in_file+"."+tstr+".stat.txt",'w')
     stat_file.write( stat_str )
     stat_file.close()
-
+    
     #Write cluster tsv and cluster 
     cluster_lengths             = []
     cluster_and_ids_on_one_line = []
@@ -252,7 +253,7 @@ def dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir):
     of = open(out_dir+in_file+"."+tstr+".cluster-members.txt",'w')
     of.write("\n".join(cluster_and_ids_on_one_line))
     of.close()
-
+    
     """    
     reduced_data  = PCA(n_components=2).fit_transform(np_vecs)
     reduced_data  = scale( reduced_data )
@@ -343,5 +344,5 @@ som_map =  runOrangeSOM(domain_set,np_vecs,x,y)
 #Find k and centroids
 k_clusters = getclusternumber( som_map,len(np_vecs) )
 #Do kmeans clustering
-dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir)
+dokmeans(np_vecs,in_file,k_clusters,domain_set,out_dir,x,y)
 

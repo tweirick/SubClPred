@@ -9,6 +9,7 @@ parser.add_argument('--cluster_file',
 
 parser.add_argument('--fasta_file',
                     default="",
+                    required=True,
                     help='Takes a file name as a string.')
 
 parser.add_argument('--out_dir',
